@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Cabine 2000 | cabine de fotos online com clima anos 2000</title>
+  <meta name="description" content="Cabine de fotos online com visual anos 2000: tire ou carregue fotos, escolha filtros de câmera digital antiga, molduras e adesivos, e baixe sua tirinha.">
+  <meta name="theme-color" content="#ff7ad9">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 2l3.5 9.5L29 13l-7.5 6 2.5 10-8-5.5L8 29l2.5-10L3 13l9.5-1.5z' fill='%23ff4fc3' stroke='%23fff' stroke-width='1.5'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;700&family=VT323&family=Fredoka:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="fundo" aria-hidden="true"></div>
+
+  <!-- ============ MENU ============ -->
+  <section class="tela ativa" id="tela-menu" aria-labelledby="titulo-site">
+    <div class="janela janela-menu">
+      <div class="janela-barra"><span>cabine2000.exe</span><span class="janela-botoes" aria-hidden="true"><i></i><i></i><i></i></span></div>
+      <div class="janela-corpo">
+        <h1 id="titulo-site" class="logo-cromado">Cabine<br>2000</h1>
+        <p class="sub">Tire fotos como se fosse 2003. Câmera digital, flash estourado, data laranja no canto e adesivo de coração.</p>
+        <div class="botoes-menu">
+          <button class="btn-bolha rosa" data-ir="layout" data-modo="camera">📸 Tirar fotos</button>
+          <button class="btn-bolha azul" data-ir="layout" data-modo="upload">💾 Carregar fotos</button>
+        </div>
+        <p class="contador" aria-live="polite">suas visitas: <span id="contador">000001</span></p>
+      </div>
+    </div>
+    <div class="letreiro" aria-hidden="true"><span>★ sorria para a webcam ★ salve no seu PC ★ poste no seu fotolog ★ manda pros BFFs ★ sorria para a webcam ★ salve no seu PC ★ poste no seu fotolog ★ manda pros BFFs ★</span></div>
+  </section>
+
+  <!-- ============ LAYOUT ============ -->
+  <section class="tela" id="tela-layout" aria-labelledby="titulo-layout">
+    <div class="janela">
+      <div class="janela-barra"><span>escolha_o_layout.exe</span><span class="janela-botoes" aria-hidden="true"><i></i><i></i><i></i></span></div>
+      <div class="janela-corpo">
+        <h2 id="titulo-layout" class="titulo-pixel">Escolha o layout</h2>
+        <div class="grade-layouts" id="grade-layouts" role="radiogroup" aria-label="Layouts"></div>
+        <div class="linha-botoes">
+          <button class="btn-bolha cinza" data-ir="menu">← Voltar</button>
+          <button class="btn-bolha rosa" id="btn-continuar-layout">Continuar →</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CÂMERA ============ -->
+  <section class="tela" id="tela-camera" aria-labelledby="titulo-camera">
+    <h2 id="titulo-camera" class="sr-only">Câmera</h2>
+    <div class="digicam">
+      <div class="digicam-topo" aria-hidden="true"><span class="marca">CYBER·CAM 2000</span><span class="led" id="led"></span></div>
+      <div class="lcd" id="lcd">
+        <video id="video" playsinline muted autoplay></video>
+        <div class="hud" aria-hidden="true">
+          <span class="hud-ce">▣ 4:3</span>
+          <span class="hud-cd"><span class="bateria"><i></i><i></i><i></i></span></span>
+          <span class="hud-be" id="hud-contagem">1/4</span>
+          <span class="hud-bd" id="hud-data"></span>
+        </div>
+        <div class="contagem" id="contagem" aria-live="assertive"></div>
+        <div class="flash" id="flash"></div>
+        <div class="aviso-camera" id="aviso-camera" hidden></div>
+      </div>
+      <div class="digicam-baixo">
+        <div class="chips" id="chips-filtro-camera" role="radiogroup" aria-label="Filtro"></div>
+        <div class="linha-botoes">
+          <button class="btn-bolha cinza" id="btn-camera-voltar">← Voltar</button>
+          <button class="btn-bolha cinza" id="btn-espelhar" aria-pressed="true">⇋ Espelhar</button>
+          <button class="btn-bolha rosa grande" id="btn-disparar">● Começar</button>
+        </div>
+        <div class="miniaturas" id="miniaturas-camera" aria-label="Fotos tiradas"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ UPLOAD ============ -->
+  <section class="tela" id="tela-upload" aria-labelledby="titulo-upload">
+    <div class="janela">
+      <div class="janela-barra"><span>meus_documentos/fotos</span><span class="janela-botoes" aria-hidden="true"><i></i><i></i><i></i></span></div>
+      <div class="janela-corpo">
+        <h2 id="titulo-upload" class="titulo-pixel">Carregue suas fotos</h2>
+        <p class="sub">Toque em cada quadro para escolher uma foto, ou escolha várias de uma vez.</p>
+        <div class="slots" id="slots"></div>
+        <input type="file" id="input-varias" accept="image/*" multiple hidden>
+        <input type="file" id="input-uma" accept="image/*" hidden>
+        <div class="linha-botoes">
+          <button class="btn-bolha cinza" data-ir="layout">← Voltar</button>
+          <button class="btn-bolha azul" id="btn-varias">💾 Escolher várias</button>
+          <button class="btn-bolha rosa" id="btn-pronto-upload" disabled>Pronto →</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ EDITOR ============ -->
+  <section class="tela" id="tela-editor" aria-labelledby="titulo-editor">
+    <div class="editor">
+      <div class="area-tira">
+        <canvas id="tira" aria-label="Prévia da tirinha de fotos"></canvas>
+        <p class="dica" id="dica-adesivo">Toque num adesivo para colocar. Arraste para mover.</p>
+      </div>
+      <div class="janela painel">
+        <div class="janela-barra"><span>personalizar.exe</span><span class="janela-botoes" aria-hidden="true"><i></i><i></i><i></i></span></div>
+        <div class="janela-corpo">
+          <h2 id="titulo-editor" class="titulo-pixel">Deixe com a sua cara</h2>
+
+          <h3>Filtro</h3>
+          <div class="chips" id="chips-filtro" role="radiogroup" aria-label="Filtro"></div>
+
+          <h3>Moldura</h3>
+          <div class="chips" id="chips-moldura" role="radiogroup" aria-label="Moldura"></div>
+
+          <h3>Adesivos</h3>
+          <div class="adesivos" id="paleta-adesivos"></div>
+          <div class="controles-adesivo" id="controles-adesivo" hidden>
+            <button class="btn-mini" data-acao="menor" aria-label="Diminuir adesivo">−</button>
+            <button class="btn-mini" data-acao="maior" aria-label="Aumentar adesivo">+</button>
+            <button class="btn-mini" data-acao="girar" aria-label="Girar adesivo">↻</button>
+            <button class="btn-mini" data-acao="remover" aria-label="Remover adesivo">🗑</button>
+          </div>
+
+          <h3>Texto</h3>
+          <label class="campo"><span>Legenda</span><input id="legenda" maxlength="28" placeholder="ex.: melhores amigas ♥"></label>
+          <label class="campo-check"><input type="checkbox" id="mostrar-data" checked> Data laranja nas fotos</label>
+
+          <div class="linha-botoes coluna">
+            <button class="btn-bolha rosa grande" id="btn-baixar">⬇ Baixar foto</button>
+            <button class="btn-bolha azul" id="btn-compartilhar" hidden>📤 Compartilhar</button>
+            <button class="btn-bolha cinza" id="btn-de-novo">↺ Tirar de novo</button>
+            <button class="btn-bolha cinza" data-ir="menu">⌂ Menu</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="rodape">
+    Feito com ♥ e nostalgia. As fotos ficam só no seu aparelho: nada é enviado para a internet.
+  </footer>
+</body>
+</html>
