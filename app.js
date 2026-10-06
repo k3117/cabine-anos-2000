@@ -35,6 +35,11 @@ const MOLDURAS = {
   rede: { nome: "Rede social 2004", cor: "#6d9eeb" },
   digicam: { nome: "Câmera preta", cor: "#1a1a1a" },
   emo: { nome: "Xadrez emo", cor: "#111111" },
+  glitter: { nome: "Glitter rosa", cor: "#ff3d9a" },
+  oncinha: { nome: "Oncinha", cor: "#d9a066" },
+  celular: { nome: "Celular flip", cor: "#ff8cc8" },
+  camera: { nome: "Câmera digital", cor: "#c3c9d6" },
+  festa: { nome: "Festa", cor: "#ffc2e0" },
   polaroid: { nome: "Polaroid", cor: "#fbf8f1" },
   story: { nome: "Pôr do sol", cor: "#ff5a7e" },
   coquette: { nome: "Coquette", cor: "#ffc2df" },
@@ -43,8 +48,30 @@ const MOLDURAS = {
   filme: { nome: "Filme analógico", cor: "#4a2a12" },
 };
 
+/* Pacote de adesivos em imagem: arquivos na pasta adesivos/ */
+const PACOTE = [
+  "estrela-glitter-rosa", "estrela-glitter-prata", "estrela-glitter-dourada", "estrela-cromada", "estrela-bolha-cromada",
+  "estrela-zebra", "estrela-neon", "coracao-glitter", "coracao-oncinha", "coracao-gema", "globo-de-luz", "globo-de-luz-rosa",
+  "laco-brilhante", "laco-oncinha", "cereja-brilhante", "cereja-oncinha", "boca-glitter", "borboleta-glitter",
+  "celular-flip", "camera-digital", "fita-cassete", "cd-holografico", "bola-8-rosa", "oculos-estrela", "oculos-pixel",
+  "bigode-glitter", "chapeu-festa", "coquetel", "dado-felpudo", "cruz-strass", "clipe-coracao", "fita-xadrez", "bandeirinhas",
+  "texto-2000s-baby", "texto-xoxo", "texto-diva", "placa-no-boys", "placa-selfie", "placa-amo-2000", "claquete",
+];
+const IMAGENS = {};
+function imagem(nome) {
+  if (!IMAGENS[nome]) {
+    const im = new Image();
+    im.decoding = "async";
+    im.onload = () => { if ($("tela-editor").classList.contains("ativa")) compor(); };
+    im.src = `adesivos/${nome}.webp`;
+    IMAGENS[nome] = im;
+  }
+  return IMAGENS[nome];
+}
+PACOTE.forEach(imagem);
 const GRUPOS_ADESIVOS = [
-  ["Anos 2000", ["coracao", "estrela", "brilho", "flor", "carinha", "borboleta", "celular", "cd", "xoxo", "bff", "lol", "bolha"]],
+  ["Glitter Y2K", PACOTE.map((n) => "arq:" + n)],
+  ["Anos 2000", ["coracao", "estrela", "brilho", "flor", "borboleta", "celular", "cd", "xoxo", "bff", "lol", "bolha"]],
   ["Instagramáveis", ["lacinho", "fita", "cereja", "beijo", "coroa", "nuvem", "arcoiris", "oculos", "balao", "local", "curtidas", "musica", "slider", "tbt", "sextou", "mood", "ootd", "amovcs", "bestday"]],
 ];
 const TAGS = {
@@ -395,6 +422,14 @@ function etiqueta(ctx, s, txt, fundo, cor, icone) {
 
 /** Desenha um adesivo centrado em (0,0) com tamanho s. */
 function desenharAdesivo(ctx, tipo, s) {
+  if (tipo.startsWith("arq:")) {
+    const im = imagem(tipo.slice(4));
+    if (!im.complete || !im.naturalWidth) return;
+    const k = s / Math.max(im.naturalWidth, im.naturalHeight);
+    const w = im.naturalWidth * k, h = im.naturalHeight * k;
+    ctx.drawImage(im, -w / 2, -h / 2, w, h);
+    return;
+  }
   const T = "#2a1840";
   ctx.lineWidth = Math.max(2, s * .05); ctx.strokeStyle = T; ctx.lineJoin = "round";
   switch (tipo) {
@@ -540,13 +575,6 @@ function desenharAdesivo(ctx, tipo, s) {
     }
     case "nuvem": {
       nuvemEm(ctx, 0, 0, s);
-      ctx.fillStyle = T;
-      ctx.beginPath(); ctx.arc(-s * .1, s * .02, s * .03, 0, Math.PI * 2); ctx.fill();
-      ctx.beginPath(); ctx.arc(s * .1, s * .02, s * .03, 0, Math.PI * 2); ctx.fill();
-      ctx.beginPath(); ctx.arc(0, s * .06, s * .06, 0.15 * Math.PI, 0.85 * Math.PI); ctx.stroke();
-      ctx.fillStyle = "rgba(255,90,180,.45)";
-      ctx.beginPath(); ctx.arc(-s * .19, s * .09, s * .045, 0, Math.PI * 2); ctx.fill();
-      ctx.beginPath(); ctx.arc(s * .19, s * .09, s * .045, 0, Math.PI * 2); ctx.fill();
       break;
     }
     case "arcoiris": {
@@ -698,16 +726,75 @@ function desenharFundoMoldura(ctx, W, H) {
     }
     for (let i = 0; i < Math.round(W * H / 2500); i++) { ctx.fillStyle = `rgba(255,255,255,${.3 + r() * .7})`; ctx.beginPath(); ctx.arc(r() * W, r() * H, .6 + r() * 1.6, 0, Math.PI * 2); ctx.fill(); }
     for (let i = 0; i < 10; i++) { ctx.fillStyle = "#fff7c2"; caminhoEstrela(ctx, r() * W, r() * H, 8 + r() * 10, 1.5, 4); ctx.fill(); }
+  } else if (m === "glitter") {
+    ctx.fillStyle = padrao(ctx, "lantejoula"); ctx.fillRect(0, 0, W, H);
+  } else if (m === "oncinha") {
+    ctx.fillStyle = padrao(ctx, "oncinha"); ctx.fillRect(0, 0, W, H);
+    ctx.strokeStyle = "#ff3d9a"; ctx.lineWidth = 12; ctx.strokeRect(6, 6, W - 12, H - 12);
+  } else if (m === "celular" || m === "camera") {
+    const g = ctx.createLinearGradient(0, 0, W, 0);
+    (m === "celular" ? ["#ff8cc8", "#ffd9ee", "#ff9fd2", "#e2559f", "#ff9fd2"] : ["#c9ced9", "#f5f7fa", "#aeb5c4", "#e8ebf1", "#9aa2b3"])
+      .forEach((c, i, a) => g.addColorStop(i / (a.length - 1), c));
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = "rgba(255,255,255,.35)"; ctx.fillRect(0, 0, W, 10);
+    const { l } = medidas();
+    const yFim = MARGEM + l.rows * l.ph + (l.rows - 1) * ESPACO;
+    caixaArredondada(ctx, MARGEM - 26, MARGEM - 26, W - 2 * MARGEM + 52, yFim - MARGEM + 52, 22);
+    ctx.fillStyle = "#15151f"; ctx.fill();
+    if (m === "celular") { caixaArredondada(ctx, W / 2 - 50, 4, 100, 9, 4); ctx.fillStyle = "#8a2459"; ctx.fill(); }
+  } else if (m === "festa") {
+    ctx.fillStyle = "#ffc2e0"; ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = "rgba(255,255,255,.25)"; for (let x = 0; x < W; x += 6) ctx.fillRect(x, 0, 2, H);
+    ctx.fillStyle = "#1a1a24"; const passo = 34;
+    for (let x = 14; x < W; x += passo) { ctx.beginPath(); ctx.arc(x, H - 12, 4, 0, Math.PI * 2); ctx.fill(); }
+    for (let y = 14; y < H; y += passo) { ctx.beginPath(); ctx.arc(12, y, 4, 0, Math.PI * 2); ctx.arc(W - 12, y, 4, 0, Math.PI * 2); ctx.fill(); }
+    const cores = ["#ff8fcf", "#ffe066", "#9fd8ff", "#c7b3ff", "#ff4fae", "#7ee0b5"];
+    const n = Math.round(W / 60);
+    for (let i = 0; i < n; i++) { const x = i * W / n; ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x + W / n, 0); ctx.lineTo(x + W / n / 2, 34); ctx.closePath(); ctx.fillStyle = cores[i % cores.length]; ctx.fill(); }
   } else if (m === "filme") {
     ctx.fillStyle = "#3b2210"; ctx.fillRect(0, 0, W, H);
     ctx.fillStyle = "#e9d8b4";
     for (let y = 10; y < H - 20; y += 44) { caixaArredondada(ctx, 7, y, 16, 24, 4); ctx.fill(); caixaArredondada(ctx, W - 23, y, 16, 24, 4); ctx.fill(); }
   }
 }
+const PADROES = {};
+function padrao(ctx, nome) {
+  if (!PADROES[nome]) {
+    const c = document.createElement("canvas"); c.width = c.height = 240;
+    const x = c.getContext("2d"), r = rand(nome.length * 97);
+    if (nome === "lantejoula") {
+      x.fillStyle = "#a3005a"; x.fillRect(0, 0, 240, 240);
+      const q = 12;
+      for (let j = 0, y = 0; y < 240 + q; j++, y += q * .86) for (let i = 0, cx = (j % 2) * q / 2; cx < 240 + q; i++, cx += q) {
+        const l = r(), g = x.createRadialGradient(cx - 2, y - 2, 1, cx, y, q * .55);
+        g.addColorStop(0, l > .86 ? "#ffffff" : l > .5 ? "#ffb3dd" : "#ff7cc4"); g.addColorStop(.7, "#ff2f95"); g.addColorStop(1, "#b0005e");
+        x.fillStyle = g; x.beginPath(); x.arc(cx % 240, y % 240, q * .5, 0, Math.PI * 2); x.fill();
+      }
+      for (let i = 0; i < 14; i++) { x.fillStyle = "#ffffff"; caminhoEstrela(x, r() * 240, r() * 240, 3 + r() * 6, 1, 4); x.fill(); }
+    } else if (nome === "oncinha") {
+      x.fillStyle = "#e3b07c"; x.fillRect(0, 0, 240, 240);
+      for (let i = 0; i < 46; i++) {
+        const cx = r() * 240, cy = r() * 240, s = 8 + r() * 8;
+        for (const [dx, dy] of [[0, 0], [240, 0], [-240, 0], [0, 240], [0, -240]]) {
+          x.fillStyle = "#b8743e"; x.beginPath(); x.ellipse(cx + dx, cy + dy, s * .8, s * .6, i, 0, Math.PI * 2); x.fill();
+          x.strokeStyle = "#2b1608"; x.lineWidth = s * .42; x.lineCap = "round";
+          const st = i * 1.7;
+          for (let k = 0; k < 3; k++) { x.beginPath(); x.ellipse(cx + dx, cy + dy, s, s * .8, 0, st + k * 2.1, st + k * 2.1 + 1.3); x.stroke(); }
+        }
+      }
+    }
+    PADROES[nome] = c;
+  }
+  return ctx.createPattern(PADROES[nome], "repeat");
+}
 /** Enfeites desenhados por cima das fotos, nos cantos. */
 function desenharEnfeitesMoldura(ctx, W, H) {
   const m = estado.moldura;
   const em = (tipo, x, y, tam, rot = 0) => { ctx.save(); ctx.translate(x, y); ctx.rotate(rot); desenharAdesivo(ctx, tipo, tam); ctx.restore(); };
+  const yFoto = H - RODAPE;
+  if (m === "glitter") { em("arq:estrela-cromada", 70, yFoto - 40, 150, .2); em("arq:estrela-glitter-prata", W - 56, 56, 100, -.2); return; }
+  if (m === "oncinha") { em("arq:laco-oncinha", W - 70, 62, 140, .15); em("arq:coracao-glitter", 60, yFoto - 30, 100, -.2); return; }
+  if (m === "festa") { em("arq:globo-de-luz", 70, 80, 140); em("arq:estrela-glitter-dourada", 64, yFoto - 30, 110, -.2); em("arq:coquetel", W - 60, yFoto - 40, 110, .15); em("arq:coracao-gema", W - 50, H * .4, 70, .2); return; }
   if (m === "polaroid") { em("fita", 60, 34, 150, -0.35); em("fita", W - 60, 34, 150, 0.85); }
   else if (m === "coquette") { em("lacinho", 52, 46, 110, -0.2); em("lacinho", W - 52, 46, 110, 0.2); }
   else if (m === "galaxia" || m === "holografico") { em("brilho", W - 44, 44, 80); em("brilho", 40, H - RODAPE - 10, 60); }
@@ -719,7 +806,8 @@ function desenharEnfeitesMoldura(ctx, W, H) {
 }
 function corBordaFoto() {
   return { rosa: "#ffffff", cromado: "#ffffff", rede: "#ffffff", digicam: "#f2f2f2", emo: "#ff4fc3", polaroid: "#efe9dd", story: "#ffffff",
-    coquette: "#ffffff", holografico: "#ffffff", galaxia: "#e6d4ff", filme: "#1a0d05" }[estado.moldura];
+    coquette: "#ffffff", holografico: "#ffffff", galaxia: "#e6d4ff", filme: "#1a0d05",
+    glitter: "#ffffff", oncinha: "#ff8fc4", celular: "#15151f", camera: "#15151f", festa: "#ffffff" }[estado.moldura];
 }
 const CORES_RODAPE = {
   rosa: ["#ffffff", "#2a1840", "#ffffff", "#2a1840"],
@@ -732,6 +820,9 @@ const CORES_RODAPE = {
   holografico: ["#ffffff", "#6b4fd8", "#ffffff", "#6b4fd8"],
   galaxia: ["#ffe14d", "#1b0b3a", "#c7b3ff", "#1b0b3a"],
   filme: ["#ffb347", "#1a0d05", "#e9d8b4", "#1a0d05"],
+  glitter: ["#ffffff", "#8a0045", "#ffffff", "#8a0045"],
+  oncinha: ["#ff3d9a", "#ffffff", "#2b1608", "#ffffff"],
+  festa: ["#ff2f8e", "#ffffff", "#2a1840", "#ffffff"],
 };
 function desenharRodape(ctx, W, H) {
   const m = estado.moldura;
@@ -743,6 +834,32 @@ function desenharRodape(ctx, W, H) {
     ctx.font = `48px VT323, monospace`; ctx.fillStyle = "#ff9a1f"; ctx.shadowColor = "rgba(255,140,0,.8)"; ctx.shadowBlur = 12;
     ctx.fillText((estado.legenda || "CABINE 2000").toUpperCase(), W / 2, cy - 22); ctx.shadowBlur = 0;
     ctx.font = `32px VT323, monospace`; ctx.fillStyle = "#cfcfcf"; ctx.fillText(`${dataDigicam()} · ${titulo}`, W / 2, cy + 26);
+    return;
+  }
+  if (m === "celular") {
+    ctx.font = `700 34px Fredoka, sans-serif`;
+    textoContorno(ctx, estado.legenda || titulo, W / 2, cy - 14, "#ffffff", "#b0186a", 7);
+    const dy = cy + 44;
+    ctx.beginPath(); ctx.arc(W / 2, dy, 28, 0, Math.PI * 2);
+    const g = ctx.createLinearGradient(W / 2 - 28, dy - 28, W / 2 + 28, dy + 28); g.addColorStop(0, "#ffffff"); g.addColorStop(.5, "#aeb5c4"); g.addColorStop(1, "#f2f4f8");
+    ctx.fillStyle = g; ctx.fill(); ctx.lineWidth = 4; ctx.strokeStyle = "#8a2459"; ctx.stroke();
+    ctx.beginPath(); ctx.arc(W / 2, dy, 11, 0, Math.PI * 2); ctx.fillStyle = "#ffe6f4"; ctx.fill(); ctx.stroke();
+    [[-1, "#4cc76a"], [1, "#ff4d6d"]].forEach(([d, c]) => {
+      caixaArredondada(ctx, W / 2 + d * 100 - 40, dy - 15, 80, 30, 15); ctx.fillStyle = "#ffe6f4"; ctx.fill(); ctx.stroke();
+      ctx.fillStyle = c; caixaArredondada(ctx, W / 2 + d * 100 - 16, dy - 6, 32, 12, 6); ctx.fill();
+    });
+    return;
+  }
+  if (m === "camera") {
+    ctx.font = `700 34px Fredoka, sans-serif`; ctx.textAlign = "left";
+    textoContorno(ctx, estado.legenda || titulo, 46, cy, "#2a2f3c", "#f5f7fa", 6);
+    ctx.font = `26px VT323, monospace`; ctx.fillStyle = "#4a5263"; ctx.fillText(`DIGITAL 8.0 MP · ${dataDigicam()}`, 46, cy + 44);
+    const dx = W - 86, dy = cy + 18;
+    ctx.beginPath(); ctx.arc(dx, dy, 48, 0, Math.PI * 2); ctx.fillStyle = "#e8ebf1"; ctx.fill(); ctx.lineWidth = 4; ctx.strokeStyle = "#6b7387"; ctx.stroke();
+    ctx.beginPath(); ctx.arc(dx, dy, 18, 0, Math.PI * 2); ctx.fillStyle = "#ff5fb4"; ctx.fill(); ctx.stroke();
+    ctx.font = `20px VT323, monospace`; ctx.fillStyle = "#4a5263"; ctx.textAlign = "center";
+    [["MENU", 0, -32], ["DISP", 33, 0], ["▶", 0, 35], ["★", -33, 0]].forEach(([t, ox, oy]) => ctx.fillText(t, dx + ox, dy + oy));
+    ctx.textAlign = "center";
     return;
   }
   const [preench, contorno, subPreench, subContorno] = CORES_RODAPE[m];
@@ -808,10 +925,17 @@ function montarPaleta() {
   const rot = document.createElement("p"); rot.className = "grupo-adesivos"; rot.textContent = grupo; p.appendChild(rot);
   for (const tipo of lista) {
     const b = document.createElement("button");
-    b.type = "button"; b.setAttribute("aria-label", `Adicionar adesivo ${tipo}`);
-    const c = document.createElement("canvas"); c.width = 96; c.height = 96;
-    const ctx = c.getContext("2d"); ctx.translate(48, 48); desenharAdesivo(ctx, tipo, TAGS[tipo] || tipo === "local" ? 62 : 76);
-    b.appendChild(c);
+    b.type = "button";
+    const nomeLegivel = (tipo.startsWith("arq:") ? tipo.slice(4) : tipo).replace(/-/g, " ");
+    b.setAttribute("aria-label", `Adicionar adesivo ${nomeLegivel}`); b.title = nomeLegivel;
+    if (tipo.startsWith("arq:")) {
+      const im = document.createElement("img"); im.src = `adesivos/${tipo.slice(4)}.webp`; im.alt = ""; im.loading = "lazy";
+      b.appendChild(im);
+    } else {
+      const c = document.createElement("canvas"); c.width = 96; c.height = 96;
+      const ctx = c.getContext("2d"); ctx.translate(48, 48); desenharAdesivo(ctx, tipo, TAGS[tipo] || tipo === "local" ? 62 : 76);
+      b.appendChild(c);
+    }
     b.addEventListener("click", () => {
       const { W, H } = medidas();
       const n = estado.adesivos.length;

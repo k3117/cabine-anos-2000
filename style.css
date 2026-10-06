@@ -194,3 +194,5 @@ h3 { font-family: var(--pixel); font-size: 17px; margin: 18px 0 8px; text-align:
   .flash.ativo { animation: none; }
 }
 .adesivos .grupo-adesivos { grid-column: 1 / -1; margin: 6px 0 0; font-family: var(--pixel); font-size: 14px; color: var(--tinta); }
+.adesivos { max-height: 360px; overflow-y: auto; padding-right: 4px; }
+.adesivos img { width: 100%; height: 100%; object-fit: contain; display: block; }
